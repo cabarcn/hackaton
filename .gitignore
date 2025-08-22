@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Sistema/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Django
+*.sqlite3
+/media/
+staticfiles/
+static_root/
+*.log
+
+# Seguridad
+.env
+*.env
+secrets.json
+
+# Node (por si lo usas)
+node_modules/

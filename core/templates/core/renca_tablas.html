@@ -1,0 +1,240 @@
+{% extends 'core/base.html' %}
+{% block title %}Tablas de la solicitud{% endblock %}
+{% block content %}
+
+<h4 class="mb-3">Tablas — {{ obj.nombre_licitacion }}</h4>
+
+<form method="post" class="d-grid gap-4">{% csrf_token %}
+
+  <!-- Pauta de evaluación -->
+  <div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong>Pauta de evaluación (debe sumar 100%)</strong>
+      <div>
+        Total: <span id="pauta-total" class="badge bg-secondary">0%</span>
+      </div>
+    </div>
+    <div class="card-body">
+      {{ pauta_fs.management_form }}
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width:38%">Factor</th>
+              <th style="width:10%">%</th>
+              <th>Descripción</th>
+              <th style="width:8%">Borrar</th>
+            </tr>
+          </thead>
+          <tbody id="pauta-body">
+            {% for form in pauta_fs %}
+            <tr class="pauta-row">
+              <td>{{ form.nombre }}</td>
+              <td>{{ form.porcentaje }}</td>
+              <td>{{ form.descripcion }}</td>
+              <td class="text-center">{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if pauta_fs.non_form_errors %}
+        <div class="alert alert-danger">{{ pauta_fs.non_form_errors }}</div>
+      {% endif %}
+
+      <!-- plantilla vacía para clonado -->
+      <template id="tmpl-pauta">
+        <tr class="pauta-row">
+          <td>{{ pauta_fs.empty_form.nombre }}</td>
+          <td>{{ pauta_fs.empty_form.porcentaje }}</td>
+          <td>{{ pauta_fs.empty_form.descripcion }}</td>
+          <td class="text-center">{{ pauta_fs.empty_form.DELETE }}</td>
+        </tr>
+      </template>
+
+      <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-pauta">Agregar factor</button>
+    </div>
+  </div>
+
+  <!-- Comisión -->
+  <div class="card shadow-sm">
+    <div class="card-header"><strong>Comisión evaluadora</strong></div>
+    <div class="card-body">
+      {{ com_fs.management_form }}
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width:35%">Nombre</th>
+              <th style="width:35%">Unidad</th>
+              <th style="width:16%">Rol</th>
+              <th style="width:8%">Borrar</th>
+            </tr>
+          </thead>
+          <tbody id="com-body">
+            {% for form in com_fs %}
+            <tr class="com-row">
+              <td>{{ form.nombre }}</td>
+              <td>{{ form.unidad }}</td>
+              <td>{{ form.rol }}</td>
+              <td class="text-center">{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if com_fs.non_form_errors %}
+        <div class="alert alert-danger">{{ com_fs.non_form_errors }}</div>
+      {% endif %}
+
+      <template id="tmpl-com">
+        <tr class="com-row">
+          <td>{{ com_fs.empty_form.nombre }}</td>
+          <td>{{ com_fs.empty_form.unidad }}</td>
+          <td>{{ com_fs.empty_form.rol }}</td>
+          <td class="text-center">{{ com_fs.empty_form.DELETE }}</td>
+        </tr>
+      </template>
+
+      <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-com">Agregar miembro</button>
+    </div>
+  </div>
+
+  <!-- Normativas -->
+  <div class="card shadow-sm">
+    <div class="card-header"><strong>Normativas</strong></div>
+    <div class="card-body">
+      {{ norm_fs.management_form }}
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width:35%">Nombre</th>
+              <th style="width:16%">Número</th>
+              <th style="width:14%">Fecha</th>
+              <th>Institución</th>
+              <th style="width:8%">Borrar</th>
+            </tr>
+          </thead>
+          <tbody id="norm-body">
+            {% for form in norm_fs %}
+            <tr class="norm-row">
+              <td>{{ form.nombre }}</td>
+              <td>{{ form.numero }}</td>
+              <td>{{ form.fecha }}</td>
+              <td>{{ form.institucion }}</td>
+              <td class="text-center">{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <template id="tmpl-norm">
+        <tr class="norm-row">
+          <td>{{ norm_fs.empty_form.nombre }}</td>
+          <td>{{ norm_fs.empty_form.numero }}</td>
+          <td>{{ norm_fs.empty_form.fecha }}</td>
+          <td>{{ norm_fs.empty_form.institucion }}</td>
+          <td class="text-center">{{ norm_fs.empty_form.DELETE }}</td>
+        </tr>
+      </template>
+
+      <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-norm">Agregar normativa</button>
+    </div>
+  </div>
+
+  <!-- Multas -->
+  <div class="card shadow-sm">
+    <div class="card-header"><strong>Multas (UTM)</strong></div>
+    <div class="card-body">
+      {{ multa_fs.management_form }}
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width:8%">N°</th>
+              <th style="width:28%">Causa</th>
+              <th style="width:28%">Aplicación</th>
+              <th style="width:16%">Monto (UTM)</th>
+              <th style="width:8%">Borrar</th>
+            </tr>
+          </thead>
+          <tbody id="multa-body">
+            {% for form in multa_fs %}
+            <tr class="multa-row">
+              <td>{{ form.nro }}</td>
+              <td>{{ form.causa }}</td>
+              <td>{{ form.aplicacion }}</td>
+              <td>{{ form.monto_utm }}</td>
+              <td class="text-center">{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <template id="tmpl-multa">
+        <tr class="multa-row">
+          <td>{{ multa_fs.empty_form.nro }}</td>
+          <td>{{ multa_fs.empty_form.causa }}</td>
+          <td>{{ multa_fs.empty_form.aplicacion }}</td>
+          <td>{{ multa_fs.empty_form.monto_utm }}</td>
+          <td class="text-center">{{ multa_fs.empty_form.DELETE }}</td>
+        </tr>
+      </template>
+
+      <button type="button" class="btn btn-outline-primary btn-sm" id="btn-add-multa">Agregar multa</button>
+    </div>
+  </div>
+
+  <div class="text-end">
+    <button class="btn btn-primary">Guardar todo</button>
+    <a class="btn btn-outline-secondary" href="{% url 'renca_ver' obj.id %}">Volver</a>
+  </div>
+</form>
+
+<script>
+(function(){
+  // --- helpers ---
+  function addRow(prefix, tbodyId, tmplId){
+    var totalInput = document.querySelector(`#id_${prefix}-TOTAL_FORMS`);
+    var idx = parseInt(totalInput.value, 10);
+    var tmpl = document.getElementById(tmplId).innerHTML.replace(/__prefix__/g, idx);
+    document.getElementById(tbodyId).insertAdjacentHTML('beforeend', tmpl);
+    totalInput.value = idx + 1;
+    if(prefix === 'pauta'){ hookPauta(); }
+  }
+
+  // botones agregar
+  document.getElementById('btn-add-pauta').addEventListener('click', function(){ addRow('pauta','pauta-body','tmpl-pauta'); });
+  document.getElementById('btn-add-com').addEventListener('click', function(){ addRow('comision','com-body','tmpl-com'); });
+  document.getElementById('btn-add-norm').addEventListener('click', function(){ addRow('norm','norm-body','tmpl-norm'); });
+  document.getElementById('btn-add-multa').addEventListener('click', function(){ addRow('multa','multa-body','tmpl-multa'); });
+
+  // total % pauta
+  function calcTotal(){
+    var total = 0;
+    document.querySelectorAll('input[id^="id_pauta-"][id$="-porcentaje"]').forEach(function(inp){
+      var v = parseInt(inp.value || "0", 10); if(!isNaN(v)) total += v;
+    });
+    var badge = document.getElementById('pauta-total');
+    badge.textContent = total + '%';
+    badge.className = 'badge ' + (total === 100 ? 'bg-success' : 'bg-danger');
+  }
+  function hookPauta(){
+    document.querySelectorAll('input[id^="id_pauta-"][id$="-porcentaje"]').forEach(function(inp){
+      if(!inp.dataset.bound){
+        inp.addEventListener('input', calcTotal);
+        inp.dataset.bound = "1";
+      }
+    });
+    calcTotal();
+  }
+  hookPauta();
+})();
+</script>
+
+{% endblock %}

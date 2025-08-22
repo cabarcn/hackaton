@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block title %}Análisis IA{% endblock %}
+{% block content %}
+<h4 class="mb-3">3) Resultado del análisis</h4>
+<pre class="bg-white p-3 border rounded">{{ obs|safe }}</pre>
+<div class="d-flex gap-2">
+  <a class="btn btn-success" href="{% url 'reporte' %}">Ver reporte</a>
+  <a class="btn btn-outline-secondary" href="{% url 'exportar' 'docx' %}">Descargar DOCX</a>
+  <a class="btn btn-outline-secondary" href="{% url 'exportar' 'pdf' %}">Descargar PDF</a>
+</div>
+{% endblock %}

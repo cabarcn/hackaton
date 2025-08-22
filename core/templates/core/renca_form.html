@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %}
+{% block title %}Nueva Solicitud Renca{% endblock %}
+{% block content %}
+
+<h4 class="mb-3">Formulario Solicitud de Licitación (Renca)</h4>
+
+<form method="post" class="card card-body shadow-sm">{% csrf_token %}
+
+  <!-- IDENTIFICACIÓN -->
+  <h6 class="text-uppercase mt-2">Identificación de la unidad solicitante</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Nombre de la unidad</label>
+    <div class="col-md-5">{{ form.unidad_nombre }}</div>
+    <label class="col-md-2 col-form-label text-md-end">Dirección</label>
+    <div class="col-md-2">{{ form.unidad_direccion }}</div>
+  </div>
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Departamento</label>
+    <div class="col-md-3">{{ form.unidad_departamento }}</div>
+  </div>
+
+  <!-- RESPONSABLE -->
+  <h6 class="text-uppercase mt-4">Funcionario(a) responsable de la licitación</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Nombre</label>
+    <div class="col-md-5">{{ form.resp_nombre }}</div>
+    <label class="col-md-2 col-form-label text-md-end">Teléfono</label>
+    <div class="col-md-2">{{ form.resp_telefono }}</div>
+  </div>
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Correo institucional</label>
+    <div class="col-md-5">{{ form.resp_correo }}</div>
+  </div>
+
+  <!-- LICITACIÓN -->
+  <h6 class="text-uppercase mt-4">Identificación de la licitación</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Tipo de adquisición</label>
+    <div class="col-md-4">{{ form.tipo_adquisicion }}</div>
+    <label class="col-md-2 col-form-label text-md-end">Nombre de la licitación</label>
+    <div class="col-md-3">{{ form.nombre_licitacion }}</div>
+  </div>
+
+  <!-- CARACTERÍSTICAS GENERALES -->
+  <h6 class="text-uppercase mt-4">Características generales</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Modalidad de adjudicación</label>
+    <div class="col-md-4">{{ form.modalidad_adjudicacion }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Visita a terreno</label>
+    <div class="col-md-2">{{ form.visita_terreno }}</div>
+    <label class="col-md-1 col-form-label text-md-end">Lugar</label>
+    <div class="col-md-6">{{ form.visita_lugar }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Reunión informativa</label>
+    <div class="col-md-2">{{ form.reunion_informativa }}</div>
+    <label class="col-md-1 col-form-label text-md-end">Lugar</label>
+    <div class="col-md-6">{{ form.reunion_lugar }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Entrega de muestras</label>
+    <div class="col-md-2">
+      <div class="form-check">
+        {{ form.entrega_muestras }} <label class="form-check-label">Sí</label>
+      </div>
+    </div>
+    <label class="col-md-1 col-form-label text-md-end">Lugar</label>
+    <div class="col-md-6">{{ form.muestra_lugar }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Prueba técnica</label>
+    <div class="col-md-2">
+      <div class="form-check">
+        {{ form.prueba_tecnica }} <label class="form-check-label">Sí</label>
+      </div>
+    </div>
+    <label class="col-md-1 col-form-label text-md-end">Lugar</label>
+    <div class="col-md-6">{{ form.prueba_lugar }}</div>
+  </div>
+
+  <!-- CONTRATACIÓN -->
+  <h6 class="text-uppercase mt-4">Características de la contratación</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Modalidad de contratación</label>
+    <div class="col-md-4">{{ form.modalidad_contratacion }}</div>
+    <label class="col-md-2 col-form-label text-md-end">Otra modalidad</label>
+    <div class="col-md-3">{{ form.modalidad_contratacion_otra }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Plazo</label>
+    <div class="col-md-2">{{ form.plazo_valor }}</div>
+    <label class="col-md-1 col-form-label text-md-end">Unidad</label>
+    <div class="col-md-2">{{ form.plazo_unidad }}</div>
+    <label class="col-md-2 col-form-label text-md-end">Fecha específica de inicio</label>
+    <div class="col-md-2">{{ form.fecha_inicio_contrato }}</div>
+  </div>
+
+  <!-- MONTO / PRESUPUESTO / FINANCIAMIENTO -->
+  <h6 class="text-uppercase mt-4">Monto, presupuesto y financiamiento</h6>
+
+  <div class="row g-3 align-items-center">
+    <label class="col-md-3 col-form-label text-md-end">Monto de la contratación</label>
+    <div class="col-md-3">{{ form.monto_contratacion }}</div>
+    <label class="col-md-1 col-form-label text-md-end">Moneda</label>
+    <div class="col-md-2">{{ form.moneda }}</div>
+    <label class="col-md-1 col-form-label text-md-end">Otra moneda</label>
+    <div class="col-md-2">{{ form.moneda_otra }}</div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Tipo de presupuesto</label>
+    <div class="col-md-3">{{ form.tipo_presupuesto }}</div>
+    <label class="col-md-3 col-form-label text-md-end">Reajustabilidad (IPC)</label>
+    <div class="col-md-3">
+      <div class="form-check">
+        {{ form.reajustable }} <label class="form-check-label">Requiere reajuste</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 align-items-center mt-1">
+    <label class="col-md-3 col-form-label text-md-end">Tipo de financiamiento</label>
+    <div class="col-md-3">{{ form.tipo_financiamiento }}</div>
+    <label class="col-md-3 col-form-label text-md-end">Fuente (si es externo)</label>
+    <div class="col-md-3">{{ form.fuente_financiamiento }}</div>
+  </div>
+
+  <div class="text-end mt-4">
+    <button class="btn btn-primary">Guardar y continuar</button>
+  </div>
+
+</form>
+
+<!-- Activación/Desactivación dinámica de campos -->
+<script>
+(function () {
+  function toggleDisabled(condition, ids) {
+    ids.forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.disabled = !condition;
+    });
+  }
+  // selects "No/Obligatoria/Voluntaria" -> lugar habilitado solo si != 'no'
+  var selVisita = document.getElementById("id_visita_terreno");
+  var inVisita  = document.getElementById("id_visita_lugar");
+  var selReu = document.getElementById("id_reunion_informativa");
+  var inReu  = document.getElementById("id_reunion_lugar");
+
+  function updVisita(){ toggleDisabled(selVisita.value !== "no", ["id_visita_lugar"]); }
+  function updReu(){ toggleDisabled(selReu.value !== "no", ["id_reunion_lugar"]); }
+
+  if (selVisita && inVisita){ updVisita(); selVisita.addEventListener("change", updVisita); }
+  if (selReu && inReu){ updReu(); selReu.addEventListener("change", updReu); }
+
+  // checkboxes -> lugar habilitado solo si está marcado
+  var chkMuestra = document.getElementById("id_entrega_muestras");
+  var inMuestra = document.getElementById("id_muestra_lugar");
+  function updMuestra(){ toggleDisabled(chkMuestra.checked, ["id_muestra_lugar"]); }
+  if (chkMuestra && inMuestra){ updMuestra(); chkMuestra.addEventListener("change", updMuestra); }
+
+  var chkPrueba = document.getElementById("id_prueba_tecnica");
+  var inPrueba = document.getElementById("id_prueba_lugar");
+  function updPrueba(){ toggleDisabled(chkPrueba.checked, ["id_prueba_lugar"]); }
+  if (chkPrueba && inPrueba){ updPrueba(); chkPrueba.addEventListener("change", updPrueba); }
+
+  // “Otra modalidad” y “Otra moneda”
+  var selMod = document.getElementById("id_modalidad_contratacion");
+  var inModOtra = document.getElementById("id_modalidad_contratacion_otra");
+  function updMod(){ toggleDisabled(selMod.value === "otra", ["id_modalidad_contratacion_otra"]); }
+  if (selMod && inModOtra){ inModOtra.placeholder = "Especifique"; updMod(); selMod.addEventListener("change", updMod); }
+
+  var selMon = document.getElementById("id_moneda");
+  var inMonOtra = document.getElementById("id_moneda_otra");
+  function updMon(){ toggleDisabled(selMon.value === "OTRA", ["id_moneda_otra"]); }
+  if (selMon && inMonOtra){ inMonOtra.placeholder = "Indique la moneda"; updMon(); selMon.addEventListener("change", updMon); }
+})();
+</script>
+
+{% endblock %}

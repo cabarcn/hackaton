@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="mb-3">Iniciar sesión</h5>
+
+        <form method="post">{% csrf_token %}
+          <!-- Mantiene el destino original (/?next=...) -->
+          <input type="hidden" name="next" value="{{ next }}">
+
+          <div class="mb-3">
+            <label class="form-label">Usuario</label>
+            <input class="form-control" name="username" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" class="form-control" name="password" required>
+          </div>
+          <button class="btn btn-primary w-100">Entrar</button>
+        </form>
+
+        {# opcional: mini-debug visual #}
+        {% if next %}
+          <small class="text-muted d-block mt-2">Al iniciar sesión irás a: <code>{{ next }}</code></small>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

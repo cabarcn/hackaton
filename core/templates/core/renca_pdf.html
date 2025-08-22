@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Solicitud RENCA</title>
+  <style>
+    @page { size: A4; margin: 24mm 18mm; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif; font-size: 12px; color: #222; }
+    h1,h2,h3,h4 { margin: 0 0 6px 0; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 14px; margin-top: 14px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    .grid { display: table; width: 100%; }
+    .row { display: table-row; }
+    .cell { display: table-cell; padding: 4px 6px; vertical-align: top; }
+    .w25{ width:25% } .w30{ width:30% } .w35{ width:35% } .w40{ width:40% } .w50{ width:50% }
+    table { width:100%; border-collapse: collapse; margin-top: 4px; }
+    th, td { border: 1px solid #bbb; padding: 6px; }
+    th { background: #eee; }
+    .muted { color:#666; }
+  </style>
+</head>
+<body>
+  <h1>Solicitud de Licitación</h1>
+  <div class="muted">RENCA · Generado {{ obj.creado|date:"d-m-Y H:i" }}</div>
+
+  <h2>Identificación de la unidad solicitante</h2>
+  <div class="grid">
+    <div class="row">
+      <div class="cell w35"><strong>Unidad</strong></div>
+      <div class="cell">{{ obj.unidad_nombre }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Dirección</strong></div>
+      <div class="cell">{{ obj.unidad_direccion }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Departamento</strong></div>
+      <div class="cell">{{ obj.unidad_departamento }}</div>
+    </div>
+  </div>
+
+  <h2>Funcionario(a) responsable</h2>
+  <div class="grid">
+    <div class="row">
+      <div class="cell w35"><strong>Nombre</strong></div><div class="cell">{{ obj.resp_nombre }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Teléfono</strong></div><div class="cell">{{ obj.resp_telefono }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Correo</strong></div><div class="cell">{{ obj.resp_correo }}</div>
+    </div>
+  </div>
+
+  <h2>Identificación de la licitación</h2>
+  <div class="grid">
+    <div class="row">
+      <div class="cell w35"><strong>Tipo adquisición</strong></div><div class="cell">{{ obj.get_tipo_adquisicion_display }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Nombre</strong></div><div class="cell">{{ obj.nombre_licitacion }}</div>
+    </div>
+  </div>
+
+  <h2>Características generales</h2>
+  <div class="grid">
+    <div class="row">
+      <div class="cell w35"><strong>Modalidad adjudicación</strong></div><div class="cell">{{ obj.get_modalidad_adjudicacion_display }}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Visita a terreno</strong></div>
+      <div class="cell">{{ obj.get_visita_terreno_display }}{% if obj.visita_lugar %} · {{ obj.visita_lugar }}{% endif %}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Reunión informativa</strong></div>
+      <div class="cell">{{ obj.get_reunion_informativa_display }}{% if obj.reunion_lugar %} · {{ obj.reunion_lugar }}{% endif %}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Entrega de muestras</strong></div>
+      <div class="cell">{{ obj.entrega_muestras|yesno:"Sí,No" }}{% if obj.muestra_lugar %} · {{ obj.muestra_lugar }}{% endif %}</div>
+    </div>
+    <div class="row">
+      <div class="cell w35"><strong>Prueba técnica</strong></div>
+      <div class="cell">{{ obj.prueba_tecnica|yesno:"Sí,No" }}{% if obj.prueba_lugar %} · {{ obj.prueba_lugar }}{% endif %}</div>
+    </div>
+  </div>
+
+  <h2>Características de la contratación</h2>
+  <div class="grid">
+    <div class="row"><div class="cell w35"><strong>Modalidad</strong></div><div class="cell">{{ obj.get_modalidad_contratacion_display }}{% if obj.modalidad_contratacion_otra %} · {{ obj.modalidad_contratacion_otra }}{% endif %}</div></div>
+    <div class="row"><div class="cell w35"><strong>Plazo</strong></div><div class="cell">{{ obj.plazo_valor }} {{ obj.get_plazo_unidad_display }}</div></div>
+    <div class="row"><div class="cell w35"><strong>Fecha específica de inicio</strong></div><div class="cell">{{ obj.fecha_inicio_contrato|date:"d-m-Y" }}</div></div>
+  </div>
+
+  <h2>Monto, presupuesto y financiamiento</h2>
+  <div class="grid">
+    <div class="row"><div class="cell w35"><strong>Monto</strong></div><div class="cell">{{ obj.monto_contratacion }} {{ obj.get_moneda_display }}{% if obj.moneda == "OTRA" and obj.moneda_otra %} ({{ obj.moneda_otra }}){% endif %}</div></div>
+    <div class="row"><div class="cell w35"><strong>Presupuesto</strong></div><div class="cell">{{ obj.get_tipo_presupuesto_display }}</div></div>
+    <div class="row"><div class="cell w35"><strong>Reajustabilidad (IPC)</strong></div><div class="cell">{{ obj.reajustable|yesno:"Requiere,No requiere" }}</div></div>
+    <div class="row"><div class="cell w35"><strong>Financiamiento</strong></div><div class="cell">{{ obj.get_tipo_financiamiento_display }}{% if obj.tipo_financiamiento == "externo" and obj.fuente_financiamiento %} · {{ obj.fuente_financiamiento }}{% endif %}</div></div>
+  </div>
+
+  <h2>Pauta de evaluación</h2>
+  <table>
+    <thead><tr><th>Factor</th><th style="width:14%">%</th><th>Descripción</th></tr></thead>
+    <tbody>
+      {% for f in pauta %}
+      <tr><td>{{ f.nombre }}</td><td style="text-align:center">{{ f.porcentaje }}%</td><td>{{ f.descripcion }}</td></tr>
+      {% empty %}<tr><td colspan="3">Sin factores</td></tr>{% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Comisión evaluadora</h2>
+  <table>
+    <thead><tr><th>Nombre</th><th>Unidad</th><th style="width:18%">Rol</th></tr></thead>
+    <tbody>
+      {% for m in comision %}
+      <tr><td>{{ m.nombre }}</td><td>{{ m.unidad }}</td><td style="text-align:center">{{ m.get_rol_display }}</td></tr>
+      {% empty %}<tr><td colspan="3">Sin integrantes</td></tr>{% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Normativas</h2>
+  <table>
+    <thead><tr><th>Nombre</th><th>Número</th><th>Fecha</th><th>Institución</th></tr></thead>
+    <tbody>
+      {% for n in normativas %}
+      <tr><td>{{ n.nombre }}</td><td>{{ n.numero }}</td><td>{{ n.fecha|date:"d-m-Y" }}</td><td>{{ n.institucion }}</td></tr>
+      {% empty %}<tr><td colspan="4">Sin registros</td></tr>{% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Multas</h2>
+  <table>
+    <thead><tr><th style="width:8%">N°</th><th>Causa</th><th>Aplicación</th><th style="width:18%">Monto (UTM)</th></tr></thead>
+    <tbody>
+      {% for m in multas %}
+      <tr><td style="text-align:center">{{ m.nro }}</td><td>{{ m.causa }}</td><td>{{ m.aplicacion }}</td><td style="text-align:right">{{ m.monto_utm }}</td></tr>
+      {% empty %}<tr><td colspan="4">Sin multas</td></tr>{% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>

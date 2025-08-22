@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block title %}Resultado IA{% endblock %}
+{% block content %}
+<h4 class="mb-3">Resultado del análisis con IA — {{ obj.nombre_licitacion }}</h4>
+
+<h5>Resumen</h5>
+<p>{{ resultado.resumen_propuesta }}</p>
+
+<h5 class="mt-3">Observaciones</h5>
+<ul>
+  {% for o in resultado.observaciones %}
+    <li><strong>{{ o.campo }}</strong> — <em>{{ o.tipo }}</em>: {{ o.detalle }}</li>
+  {% empty %}
+    <li>Sin observaciones.</li>
+  {% endfor %}
+</ul>
+
+<h5 class="mt-3">Correcciones sugeridas</h5>
+<ul>
+  {% for c in resultado.correcciones_sugeridas %}
+    <li><strong>{{ c.campo }}</strong>: {{ c.sugerencia }}</li>
+  {% empty %}
+    <li>Sin sugerencias.</li>
+  {% endfor %}
+</ul>
+
+<div class="mt-3">
+  <a class="btn btn-outline-secondary" href="{% url 'renca_ver' obj.id %}">Volver</a>
+</div>
+{% endblock %}
