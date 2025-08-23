@@ -2,26 +2,35 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# ─────────────────────────  .env  ─────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
+def env_bool(name: str, default=False) -> bool:
+    return str(os.getenv(name, str(default))).lower() in ("1", "true", "yes", "y", "on")
+
+def env_csv(name: str, default: str = "") -> list[str]:
+    raw = os.getenv(name, default)
+    return [x.strip() for x in raw.split(",") if x.strip()]
+# ──────────────────────────────────────────────────────────
+
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2!y1&zq^h-t2q(tqfed0&=+4+6c06iup!d+(i5xg^77ny#bjf!'
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret")
+# ───────────────────── Seguridad básica ───────────────────
+DEBUG = env_bool("DEBUG", True)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-DEBUG = os.getenv("DEBUG","0") == "1"
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-key")
+if not DEBUG and SECRET_KEY == "dev-only-key":
+    raise RuntimeError("Configura SECRET_KEY en producción (variable de entorno SECRET_KEY)")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env_csv("ALLOWED_HOSTS", "127.0.0.1,localhost")
+CSRF_TRUSTED_ORIGINS = env_csv(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://127.0.0.1:8000,http://localhost:8000"
+)
 
-
-# Application definition
-
+# ─────────────────── Definición de apps ───────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "core",
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -62,10 +71,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sitio.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# ──────────────────────── Base de datos ───────────────────
+# Puedes cambiar a Postgres con DATABASE_URL si quieres más adelante.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -73,62 +80,41 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
+# ───────────────── Validadores de password ────────────────
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
+# ─────────────────── Internacionalización ─────────────────
 LANGUAGE_CODE = "es-cl"
 TIME_ZONE = "America/Santiago"
 USE_I18N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
+# ─────────────────── Archivos estáticos/media ─────────────
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "core" / "static"]
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "core" / "static"] if (BASE_DIR / "core" / "static").exists() else []
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Rutas de autenticación
+# ─────────────────── Autenticación (rutas) ────────────────
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/proposito/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-# --- Email ---
-EMAIL_BACKEND = os.getenv(
-    "EMAIL_BACKEND",
-    "django.core.mail.backends.filebased.EmailBackend"  # DEV: guarda emails en disco
-)
-EMAIL_FILE_PATH = BASE_DIR / "outbox"  # carpeta donde se guardan los correos en DEV
+# ───────────────────────── Email ──────────────────────────
+# En DEV guarda correos en disco. Cambia a SMTP cuando quieras enviar realmente.
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.filebased.EmailBackend")
+EMAIL_FILE_PATH = BASE_DIR / "outbox"
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@licitaciones.local")
 
-# Opcional: SMTP real (cuando quieras enviar de verdad)
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-# EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-# EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "1") == "1"
+# ─────────────────── OpenAI (referencias) ─────────────────
+# La API key NO se guarda aquí. Tu servicio leerá OPENAI_API_KEY del .env.
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")

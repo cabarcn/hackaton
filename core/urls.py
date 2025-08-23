@@ -1,6 +1,7 @@
 
 from django.urls import path
 from . import views
+from .views import demo_llm
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -12,6 +13,7 @@ urlpatterns = [
     path("renca/<int:pk>/tablas/", views.renca_tablas, name="renca_tablas"),
     path("renca/<int:pk>/analizar/", views.renca_analizar, name="renca_analizar"),
     path("renca/<int:pk>/pdf/", views.renca_pdf, name="renca_pdf"),
+    path("demo-llm/", demo_llm, name="demo_llm"),
 
     
 

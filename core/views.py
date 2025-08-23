@@ -7,6 +7,9 @@ from .forms import PropositoInicialForm, SolicitudRencaForm, PautaFormSet, Comis
 from .models import SolicitudRenca
 from .services.export import export_renca_pdf
 from .services.ai_renca import analizar_renca
+from django.shortcuts import render
+from .services.llm import respond  # o 'chat' si prefieres mensajes
+
 
 
 def home(request):
@@ -139,3 +142,11 @@ def renca_analizar(request, pk):
     }
     resultado = analizar_renca(data)
     return render(request, "core/renca_reporte.html", {"obj": obj, "resultado": resultado})
+
+def demo_llm(request):
+    salida = None
+    prompt_inicial = "Escribe 'pong' y nada más."
+    if request.method == "POST":
+        prompt = request.POST.get("prompt", "").strip() or prompt_inicial
+        salida = respond(prompt)  # llamada al servicio
+    return render(request, "core/demo_llm.html", {"salida": salida, "prompt_inicial": prompt_inicial})

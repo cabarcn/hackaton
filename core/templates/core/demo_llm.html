@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block title %}Demo LLM{% endblock %}
+{% block content %}
+<h2>Demo OpenAI (Responses API)</h2>
+<form method="post" class="mb-3">
+  {% csrf_token %}
+  <textarea name="prompt" rows="4" class="form-control" placeholder="Escribe tu prompt...">{{ prompt_inicial }}</textarea>
+  <button class="btn btn-primary mt-2" type="submit">Enviar</button>
+</form>
+
+{% if salida %}
+  <h5>Respuesta</h5>
+  <pre class="p-3 bg-light border rounded">{{ salida }}</pre>
+{% endif %}
+{% endblock %}

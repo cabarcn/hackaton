@@ -1,0 +1,286 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Solicitud guardada — Renca{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <!-- Encabezado -->
+  <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+      <h3 class="mb-1">Solicitud guardada (Renca)</h3>
+      <div class="small text-muted">ID #{{ solicitud.id }} · Actualizado {{ solicitud.updated_at|default:solicitud.created_at|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <!-- Chips de estado -->
+    <div class="d-flex gap-2">
+      {% if solicitud.tablas_completas %}
+        <span class="badge text-bg-success"><i class="bi bi-check2-circle me-1"></i>Tablas completas</span>
+      {% else %}
+        <span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle me-1"></i>Tablas pendientes</span>
+      {% endif %}
+      {% if solicitud.pdf_generado %}
+        <span class="badge text-bg-info"><i class="bi bi-file-earmark-pdf me-1"></i>PDF generado</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna izquierda: resumen -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Resumen</h5>
+
+          <dl class="row mb-0">
+            <dt class="col-sm-4">Nombre licitación</dt>
+            <dd class="col-sm-8">{{ solicitud.nombre_licitacion|default:"(sin nombre)" }}</dd>
+
+            <dt class="col-sm-4">Tipo de adquisición</dt>
+            <dd class="col-sm-8">{{ solicitud.tipo_adquisicion|default:"(sin indicar)" }}</dd>
+
+            <dt class="col-sm-4">Modalidad contratación</dt>
+            <dd class="col-sm-8">
+              {{ solicitud.modalidad_contratacion|default:"(sin indicar)" }}
+              {% if solicitud.modalidad_contratacion == "otra" and solicitud.modalidad_contratacion_otra %}
+                — <span class="text-muted">{{ solicitud.modalidad_contratacion_otra }}</span>
+              {% endif %}
+            </dd>
+          </dl>
+
+          {% if not solicitud.tablas_completas %}
+            <div class="alert alert-warning mt-3 d-flex align-items-start">
+              <i class="bi bi-info-circle me-2 fs-5"></i>
+              <div>
+                Para **Analizar con IA** o **Descargar PDF oficial** necesitas completar la **Pauta de evaluación** y la **Comisión**.
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: acciones -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm position-sticky" style="top: 1rem;">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted mb-3">Acciones</h6>
+
+          <!-- Grupo: completar -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Completar</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary"
+                 href="{% url 'renca_completar_tablas' solicitud.id %}"
+                 title="Completar pauta y comisión">
+                <i class="bi bi-list-check me-1"></i> Completar tablas (pauta y comisión)
+              </a>
+              <a class="btn btn-outline-secondary"
+                 href="{% url 'renca_editar' solicitud.id %}">
+                <i class="bi bi-pencil-square me-1"></i> Editar datos
+              </a>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Grupo: IA -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Análisis con IA</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-info text-white {% if not solicitud.tablas_completas %}disabled{% endif %}"
+                 href="{% if solicitud.tablas_completas %}{% url 'renca_analizar' solicitud.id %}{% else %}#{% endif %}"
+                 title="{% if solicitud.tablas_completas %}Analizar con IA{% else %}Completa las tablas primero{% endif %}">
+                <i class="bi bi-cpu me-1"></i> Analizar con IA
+              </a>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Grupo: descarga -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Descargas</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-outline-primary {% if not solicitud.tablas_completas %}disabled{% endif %}"
+                 href="{% if solicitud.tablas_completas %}{% url 'renca_pdf_oficial' solicitud.id %}{% else %}#{% endif %}"
+                 title="{% if solicitud.tablas_completas %}Descargar PDF oficial{% else %}Completa las tablas para generar el PDF{% endif %}">
+                <i class="bi bi-file-earmark-text me-1"></i> Descargar PDF oficial
+              </a>
+              {% if solicitud.pdf_generado %}
+                <a class="btn btn-outline-secondary" href="{{ solicitud.pdf_url }}">
+                  <i class="bi bi-cloud-arrow-down me-1"></i> Descargar último PDF
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Otros -->
+          <div class="d-grid gap-2">
+            <a class="btn btn-light" href="{% url 'renca_nueva' %}">
+              <i class="bi bi-plus-circle me-1"></i> Crear otra
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'renca_listado' %}">
+              <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Detalles sutiles */
+.card { border-radius: 1rem; }
+.btn { border-radius: .75rem; }
+.badge { font-weight: 600; }
+</style>
+{% endblock %}
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Solicitud guardada — Renca{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <!-- Encabezado -->
+  <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+      <h3 class="mb-1">Solicitud guardada (Renca)</h3>
+      <div class="small text-muted">ID #{{ solicitud.id }} · Actualizado {{ solicitud.updated_at|default:solicitud.created_at|date:"d/m/Y H:i" }}</div>
+    </div>
+
+    <!-- Chips de estado -->
+    <div class="d-flex gap-2">
+      {% if solicitud.tablas_completas %}
+        <span class="badge text-bg-success"><i class="bi bi-check2-circle me-1"></i>Tablas completas</span>
+      {% else %}
+        <span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle me-1"></i>Tablas pendientes</span>
+      {% endif %}
+      {% if solicitud.pdf_generado %}
+        <span class="badge text-bg-info"><i class="bi bi-file-earmark-pdf me-1"></i>PDF generado</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Columna izquierda: resumen -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Resumen</h5>
+
+          <dl class="row mb-0">
+            <dt class="col-sm-4">Nombre licitación</dt>
+            <dd class="col-sm-8">{{ solicitud.nombre_licitacion|default:"(sin nombre)" }}</dd>
+
+            <dt class="col-sm-4">Tipo de adquisición</dt>
+            <dd class="col-sm-8">{{ solicitud.tipo_adquisicion|default:"(sin indicar)" }}</dd>
+
+            <dt class="col-sm-4">Modalidad contratación</dt>
+            <dd class="col-sm-8">
+              {{ solicitud.modalidad_contratacion|default:"(sin indicar)" }}
+              {% if solicitud.modalidad_contratacion == "otra" and solicitud.modalidad_contratacion_otra %}
+                — <span class="text-muted">{{ solicitud.modalidad_contratacion_otra }}</span>
+              {% endif %}
+            </dd>
+          </dl>
+
+          {% if not solicitud.tablas_completas %}
+            <div class="alert alert-warning mt-3 d-flex align-items-start">
+              <i class="bi bi-info-circle me-2 fs-5"></i>
+              <div>
+                Para **Analizar con IA** o **Descargar PDF oficial** necesitas completar la **Pauta de evaluación** y la **Comisión**.
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: acciones -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm position-sticky" style="top: 1rem;">
+        <div class="card-body">
+          <h6 class="text-uppercase text-muted mb-3">Acciones</h6>
+
+          <!-- Grupo: completar -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Completar</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary"
+                 href="{% url 'renca_completar_tablas' solicitud.id %}"
+                 title="Completar pauta y comisión">
+                <i class="bi bi-list-check me-1"></i> Completar tablas (pauta y comisión)
+              </a>
+              <a class="btn btn-outline-secondary"
+                 href="{% url 'renca_editar' solicitud.id %}">
+                <i class="bi bi-pencil-square me-1"></i> Editar datos
+              </a>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Grupo: IA -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Análisis con IA</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-info text-white {% if not solicitud.tablas_completas %}disabled{% endif %}"
+                 href="{% if solicitud.tablas_completas %}{% url 'renca_analizar' solicitud.id %}{% else %}#{% endif %}"
+                 title="{% if solicitud.tablas_completas %}Analizar con IA{% else %}Completa las tablas primero{% endif %}">
+                <i class="bi bi-cpu me-1"></i> Analizar con IA
+              </a>
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Grupo: descarga -->
+          <div class="mb-3">
+            <div class="fw-semibold mb-1">Descargas</div>
+            <div class="d-grid gap-2">
+              <a class="btn btn-outline-primary {% if not solicitud.tablas_completas %}disabled{% endif %}"
+                 href="{% if solicitud.tablas_completas %}{% url 'renca_pdf_oficial' solicitud.id %}{% else %}#{% endif %}"
+                 title="{% if solicitud.tablas_completas %}Descargar PDF oficial{% else %}Completa las tablas para generar el PDF{% endif %}">
+                <i class="bi bi-file-earmark-text me-1"></i> Descargar PDF oficial
+              </a>
+              {% if solicitud.pdf_generado %}
+                <a class="btn btn-outline-secondary" href="{{ solicitud.pdf_url }}">
+                  <i class="bi bi-cloud-arrow-down me-1"></i> Descargar último PDF
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr>
+
+          <!-- Otros -->
+          <div class="d-grid gap-2">
+            <a class="btn btn-light" href="{% url 'renca_nueva' %}">
+              <i class="bi bi-plus-circle me-1"></i> Crear otra
+            </a>
+            <a class="btn btn-outline-secondary" href="{% url 'renca_listado' %}">
+              <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Detalles sutiles */
+.card { border-radius: 1rem; }
+.btn { border-radius: .75rem; }
+.badge { font-weight: 600; }
+</style>
+{% endblock %}
